@@ -49,7 +49,8 @@ class StaticPortal(EClient, EWrapper):
         self.cancelScannerSubscription(CLIENT_ID)
         for rank in top_stocks:
             self.algorithm(rank)
-        for k, v in list(top_stocks.items())[:MAX_TRADES]:
+        for i, k, v in enumerate(list(top_stocks.items())[:MAX_TRADES]):
+            v["order_id"] = CLIENT_ID + (ORDER_ID_RANGE * i)
             strat_buys[k] = v
         self.disconnect()
 
