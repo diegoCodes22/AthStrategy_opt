@@ -1,7 +1,5 @@
 from utils import sleep_till_open
 
-# {rank: {conId: conId, bracket: [bracket_params]}}
-
 
 def main() -> None:
     sleep_till_open()
