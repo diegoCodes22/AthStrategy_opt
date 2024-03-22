@@ -51,9 +51,7 @@ def main() -> None:
     sleep_till_open()
     sc = static_connect()
     algo(sc)
-
-
-    # dynamic_connect()
+    dynamic_connect()
 
 
 if __name__ == "__main__":
