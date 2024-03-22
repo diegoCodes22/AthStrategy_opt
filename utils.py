@@ -13,7 +13,9 @@ def sleep_till_open() -> None:
     ct = datetime.strptime(ct, "%H:%M:%S")
     mkt = datetime.strptime(MKT_OPEN, "%H:%M:%S")
     seconds_till_open = (mkt - ct).total_seconds()
-    sleep(seconds_till_open)
+    if seconds_till_open > 0:
+        sleep(seconds_till_open)
+    return
 
 
 def ohlcv_dataframe(bars: List[BarData]) -> DataFrame:
