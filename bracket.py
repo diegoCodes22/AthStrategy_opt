@@ -34,7 +34,7 @@ def bracket(rank: int) -> list:
     moc.orderType = "MOC"
     moc.transmit = False
 
-    # Adjusted exit
+    # Adjustable exit
     exit_order = Order()
     exit_order.orderId = oid + 2
     exit_order.parentId = parent.orderId

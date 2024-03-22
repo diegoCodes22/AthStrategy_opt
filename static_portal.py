@@ -6,8 +6,10 @@ from ibapi.scanner import ScannerSubscription
 from ibapi.contract import ContractDetails
 from ibapi.ticktype import TickType
 from pandas_ta.volatility import atr
+from time import sleep
 from globals import *
 from utils import ohlcv_dataframe
+from bracket import bracket
 
 
 class StaticPortal(EClient, EWrapper):
@@ -18,6 +20,8 @@ class StaticPortal(EClient, EWrapper):
 
     def nextValidId(self, orderId: int):
         self.nextOrderId = orderId
+        self.reqMarketDataType(2)
+        self.build_scanner()
 
     def error(self, reqId: TickerId, errorCode: int, errorString: str, advancedOrderRejectJson=""):
         print(errorCode, errorString)
@@ -48,19 +52,28 @@ class StaticPortal(EClient, EWrapper):
     def scannerDataEnd(self, reqId: int):
         self.cancelScannerSubscription(CLIENT_ID)
         for rank in top_stocks:
+            print(top_stocks[rank])
             self.algorithm(rank)
-        for i, k, v in enumerate(list(top_stocks.items())[:MAX_TRADES]):
-            v["order_id"] = CLIENT_ID + (ORDER_ID_RANGE * i)
+
+        c = 1
+        for k, v in list(top_stocks.items())[:MAX_TRADES]:
+            v["order_id"] = CLIENT_ID + (ORDER_ID_RANGE * c)
             strat_buys[k] = v
+            c += 1
+        print(top_stocks)
+        for rank in strat_buys:
+            strat_buys[rank]["bracket"] = bracket(rank)
         self.disconnect()
 
     def algorithm(self, rank):
+        self.hist_data.clear()
         self.reqHistoricalData(rank, top_stocks[rank]["contract"], YESTERDAY, "60 D", "1 day", 'TRADES', 1, 1, False, [])
 
     def historicalData(self, reqId: int, bar: BarData):
         self.hist_data.append(bar)
 
     def historicalDataEnd(self, reqId: int, start: str, end: str):
+        print(self.hist_data)
         df = ohlcv_dataframe(self.hist_data)
         top_stocks[reqId]["htf_atr"] = round(atr(df["high"], df["low"], df["close"], ATR_LEN).iloc[-1], 2)
         self.reqMktData(reqId, top_stocks[reqId]["contract"], "", False, False, [])
