@@ -21,7 +21,7 @@ def bracket(rank: int) -> list:
     parent.goodTillDate = parent.goodTillDate = (datetime.now(timezone("US/Eastern")) + timedelta(minutes=CANCEL_AFTER)).strftime("%Y%m%d %H:%M:%S") + " US/Eastern"
     parent.transmit = False
     parent.orderType = "TRAIL LIMIT"
-    parent.trailStopPrice = last * 1.003
+    parent.trailStopPrice = round(last * 1.003, 2)
     parent.trailingPercent = 0.2
     parent.lmtPriceOffset = round(parent.trailStopPrice * OFFSET_PRC, 2)
 
@@ -53,5 +53,7 @@ def bracket(rank: int) -> list:
     exit_order.adjustedTrailingAmount = 1
     exit_order.adjustedStopLimitPrice = round(exit_order.adjustedStopPrice - (exit_order.adjustedStopPrice * OFFSET_PRC), 2)
 
-    print(f"{parent}\n{exit_order}\nTrail trigger @ {tp_target}")
+    print(f"\n{parent.totalQuantity} shares of {strat_buys[rank]['contract'].symbol}")
+    print(f"{parent.action} @{parent.trailStopPrice}")
+    print(f"Stop @{exit_order.lmtPrice}\nTrail trigger @{tp_target}")
     return [parent, moc, exit_order]

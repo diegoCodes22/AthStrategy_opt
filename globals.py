@@ -8,7 +8,7 @@ strat_buys = {}
 # Constants
 MKT_OPEN = "09:30:00"
 MKT_CLOSE = "16:30:00"
-YESTERDAY = datetime.now(timezone("US/Eastern")).replace(hour=9, minute=00, second=0).strftime("%Y%m%d %H:%M:%S")
+YESTERDAY = datetime.now(timezone("US/Eastern")).replace(hour=9, minute=00, second=0).strftime("%Y%m%d %H:%M:%S") + " US/Eastern"
 ORDER_ID_RANGE = 5
 
 # Project configurations

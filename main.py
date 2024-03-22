@@ -2,13 +2,42 @@ from threading import Thread
 from static_portal import StaticPortal
 from dynamic_portal import DynamicPortal
 from utils import sleep_till_open
-from globals import strat_buys, HOST, PORT, CLIENT_ID
+from globals import strat_buys, top_stocks, HOST, PORT, CLIENT_ID, MAX_TRADES, ORDER_ID_RANGE
+from bracket import bracket
+from time import sleep
 
 
-def static_connect() -> None:
+def mp_strat() -> None:
+    c = 0
+    for k, v in list(top_stocks.items())[:MAX_TRADES]:
+        v["order_id"] = CLIENT_ID + (ORDER_ID_RANGE * c)
+        strat_buys[k] = v
+        strat_buys[k]["bracket"] = bracket(k)
+        c += 1
+
+
+def algo(sp: StaticPortal):
+    while sp.nextOrderId == 0 or sp.sde == 0:
+        continue
+    for rank in range(1, len(top_stocks) + 1):
+        sp.reqHist(rank)
+        while "htf_atr" not in top_stocks[rank]:
+            continue
+        sp.reqMktData(rank, top_stocks[rank]["contract"], "", False, False, [])
+        try:
+            while "quantity" not in top_stocks[rank]:
+                continue
+        except KeyError:
+            pass
+    mp_strat()
+
+
+def static_connect() -> StaticPortal:
     sp = StaticPortal()
     sp.connect(HOST, PORT, CLIENT_ID)
-    sp.run()
+    Thread(target=sp.run, args=()).start()
+    sleep(0.5)
+    return sp
 
 
 def dynamic_connect() -> None:
@@ -20,8 +49,11 @@ def dynamic_connect() -> None:
 
 def main() -> None:
     sleep_till_open()
-    static_connect()
-    dynamic_connect()
+    sc = static_connect()
+    algo(sc)
+
+
+    # dynamic_connect()
 
 
 if __name__ == "__main__":
