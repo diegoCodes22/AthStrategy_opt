@@ -1,7 +1,7 @@
 from datetime import datetime
 from pytz import timezone
 
-# {rank: {conId: conId, htf_atr: htf_atr, quantity: quantity, last: last, +oid: oid, +bracket: bracket_params}}
+# {rank: {conId: conId, htf_atr: htf_atr, quantity: quantity, last: last}}
 top_stocks = {}
 strat_buys = {}
 

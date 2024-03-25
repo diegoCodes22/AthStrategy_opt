@@ -3,11 +3,10 @@ from ibapi.order import Order
 from globals import *
 
 
-def bracket(rank: int) -> list:
+def bracket(rank: int, oid) -> list:
     last = strat_buys[rank]["last"]
     quantity = strat_buys[rank]["quantity"]
     htf_atr = strat_buys[rank]["htf_atr"]
-    oid = strat_buys[rank]["order_id"]
 
     diff = round(htf_atr * TARGET_MULTIPLIER, 2)
     tp_target = round(last + diff, 2)
@@ -49,7 +48,7 @@ def bracket(rank: int) -> list:
     exit_order.triggerPrice = tp_target
     exit_order.adjustedOrderType = "TRAIL LIMIT"
     exit_order.adjustedStopPrice = round(tp_target - diff, 2)
-    exit_order.adjustableTrailingUnit = 1
+    exit_order.adjustableTrailingUnit = 100
     exit_order.adjustedTrailingAmount = 1
     exit_order.adjustedStopLimitPrice = round(exit_order.adjustedStopPrice - (exit_order.adjustedStopPrice * OFFSET_PRC), 2)
 

@@ -7,15 +7,6 @@ from bracket import bracket
 from time import sleep
 
 
-def mp_strat() -> None:
-    c = 0
-    for k, v in list(top_stocks.items())[:MAX_TRADES]:
-        v["order_id"] = CLIENT_ID + (ORDER_ID_RANGE * c)
-        strat_buys[k] = v
-        strat_buys[k]["bracket"] = bracket(k)
-        c += 1
-
-
 def algo(sp: StaticPortal):
     while sp.sde == 0:
         continue
@@ -29,7 +20,8 @@ def algo(sp: StaticPortal):
                 continue
         except KeyError:
             pass
-    mp_strat()
+    for k, v in list(top_stocks.items())[:MAX_TRADES]:
+        strat_buys[k] = v
 
 
 def static_connect() -> StaticPortal:
@@ -42,7 +34,7 @@ def static_connect() -> StaticPortal:
 
 def dynamic_connect() -> None:
     for i, rank in enumerate(strat_buys, 1):
-        dp = DynamicPortal(strat_buys[rank]["bracket"], strat_buys[rank]["contract"])
+        dp = DynamicPortal(rank, strat_buys[rank]["contract"])
         dp.connect(HOST, PORT, CLIENT_ID + i)
         Thread(target=dp.run, args=()).start()
 
