@@ -24,5 +24,5 @@ OFFSET_PRC = 0.0005
 
 # TWS connection settings
 HOST = "127.0.0.1"
-PORT = 7497
+PORT = None
 CLIENT_ID = 1001

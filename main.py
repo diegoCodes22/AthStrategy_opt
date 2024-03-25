@@ -1,4 +1,5 @@
 from threading import Thread
+import sys
 from static_portal import StaticPortal
 from dynamic_portal import DynamicPortal
 from utils import sleep_till_open
@@ -46,4 +47,8 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    if len(sys.argv) > 1:
+        PORT = 7496
+    else:
+        PORT = 7497
     main()
