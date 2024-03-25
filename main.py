@@ -3,7 +3,6 @@ from static_portal import StaticPortal
 from dynamic_portal import DynamicPortal
 from utils import sleep_till_open
 from globals import strat_buys, top_stocks, HOST, PORT, CLIENT_ID, MAX_TRADES, ORDER_ID_RANGE
-from bracket import bracket
 from time import sleep
 
 
@@ -22,14 +21,15 @@ def algo(sp: StaticPortal):
             pass
     for k, v in list(top_stocks.items())[:MAX_TRADES]:
         strat_buys[k] = v
+    sp.disconnect()
 
 
-def static_connect() -> StaticPortal:
+def static_connect() -> None:
     sp = StaticPortal()
     sp.connect(HOST, PORT, CLIENT_ID)
-    Thread(target=sp.run, args=()).start()
+    Thread(target=sp.run, args=(), daemon=True).start()
     sleep(0.5)
-    return sp
+    algo(sp)
 
 
 def dynamic_connect() -> None:
@@ -41,8 +41,7 @@ def dynamic_connect() -> None:
 
 def main() -> None:
     sleep_till_open()
-    sc = static_connect()
-    algo(sc)
+    static_connect()
     dynamic_connect()
 
 

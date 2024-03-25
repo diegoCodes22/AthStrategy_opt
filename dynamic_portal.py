@@ -10,9 +10,11 @@ class DynamicPortal(EClient, EWrapper):
         EClient.__init__(self, self)
         self.rank = rank
         self.contract = contract
+        self.parentId = 0
 
     def nextValidId(self, orderId: int):
-        orders = bracket(self.rank, orderId)
+        self.parentId = orderId
+        orders = bracket(self.rank, self.parentId)
         for order in orders:
             self.placeOrder(order.orderId, self.contract, order)
 
@@ -20,5 +22,5 @@ class DynamicPortal(EClient, EWrapper):
                     remaining: Decimal, avgFillPrice: float, permId: int,
                     parentId: int, lastFillPrice: float, clientId: int,
                     whyHeld: str, mktCapPrice: float):
-        if remaining == Decimal(0):
+        if orderId == self.parentId and status == "PreSubmitted":
             self.disconnect()
