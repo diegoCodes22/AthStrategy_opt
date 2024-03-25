@@ -17,7 +17,7 @@ def mp_strat() -> None:
 
 
 def algo(sp: StaticPortal):
-    while sp.nextOrderId == 0 or sp.sde == 0:
+    while sp.sde == 0:
         continue
     for rank in range(1, len(top_stocks) + 1):
         sp.reqHist(rank)
@@ -41,9 +41,9 @@ def static_connect() -> StaticPortal:
 
 
 def dynamic_connect() -> None:
-    for rank in strat_buys:
+    for i, rank in enumerate(strat_buys, 1):
         dp = DynamicPortal(strat_buys[rank]["bracket"], strat_buys[rank]["contract"])
-        dp.connect(HOST, PORT, CLIENT_ID)
+        dp.connect(HOST, PORT, CLIENT_ID + i)
         Thread(target=dp.run, args=()).start()
 
 

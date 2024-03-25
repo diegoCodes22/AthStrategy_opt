@@ -53,7 +53,8 @@ def bracket(rank: int) -> list:
     exit_order.adjustedTrailingAmount = 1
     exit_order.adjustedStopLimitPrice = round(exit_order.adjustedStopPrice - (exit_order.adjustedStopPrice * OFFSET_PRC), 2)
 
-    print(f"\n{parent.totalQuantity} shares of {strat_buys[rank]['contract'].symbol}")
+    print(f"\nIDs: Entry {parent.orderId}, Exit {exit_order.orderId}, MOC {moc.orderId}")
+    print(f"{parent.totalQuantity} shares of {strat_buys[rank]['contract'].symbol}")
     print(f"{parent.action} @{parent.trailStopPrice}")
     print(f"Stop @{exit_order.lmtPrice}\nTrail trigger @{tp_target}")
     return [parent, moc, exit_order]
